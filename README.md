@@ -3,7 +3,8 @@
 opencode TUI 插件：在右侧栏顶部显示最近 10 个 session，支持点击切换，并对**需要用户处理**和**任务已完成但未查看**的 session 高亮提示。
 
 [![CI](https://github.com/wh0isroot/opencode-session-tui/actions/workflows/ci.yml/badge.svg)](https://github.com/wh0isroot/opencode-session-tui/actions/workflows/ci.yml)
-[![npm](https://img.shields.io/npm/v/opencode-session-tui.svg)](https://www.npmjs.com/package/opencode-session-tui)
+
+> 本插件**不发布到 npm**。直接用 GitHub 仓库地址安装即可（opencode 的插件加载器把 spec 透传给 [`arborist.reify`](https://github.com/sst/opencode/blob/main/packages/core/src/npm.ts)，支持 `github:owner/repo`、`git+https://…`、`git+ssh://…` 全部形态）。
 
 ## 效果
 
@@ -43,17 +44,30 @@ Sessions
 
 opencode 只在 `sidebar_content` 里给插件一个渲染槽（外层 42 列面板由宿主渲染，不可替换）。所以本插件是把内容注入到这个槽里。
 
-### 方式 A：npm 包（推荐）
+### 方式 A：从 GitHub 仓库直接安装（推荐）
 
 编辑 opencode TUI 配置，用户级 `~/.config/opencode/tui.json` 或项目级 `<project>/.opencode/tui.json`：
 
 ```json
 {
-  "plugin": ["opencode-session-tui"]
+  "plugin": ["github:wh0isroot/opencode-session-tui"]
 }
 ```
 
-opencode 会自动 `npm install` 拉取并加载此包。
+opencode 启动时会用 `@npmcli/arborist` 从 GitHub 拉取并加载。也可以钉一个 tag / commit / 分支：
+
+```json
+{
+  "plugin": [
+    "github:wh0isroot/opencode-session-tui#v0.1.0",
+    "github:wh0isroot/opencode-session-tui#main",
+    "git+https://github.com/wh0isroot/opencode-session-tui.git#<commit-sha>",
+    "git+ssh://git@github.com/wh0isroot/opencode-session-tui.git"
+  ]
+}
+```
+
+上面几种 spec 全部由 `npm-package-arg` 解析，opencode 直接透传给 arborist（见 [`packages/opencode/src/plugin/shared.ts`](https://github.com/sst/opencode/blob/main/packages/opencode/src/plugin/shared.ts) 里的 `resolvePluginTarget` → `Npm.add`）。
 
 ### 方式 B：本地文件（开发调试）
 
@@ -95,13 +109,16 @@ bun install
 bun run typecheck
 ```
 
-## 发布流程
+## 版本发布
 
-1. 提 PR，等 [CI](.github/workflows/ci.yml) 通过（`bun run typecheck`）。
-2. bump `package.json` 的 `version`。
-3. 打 tag：`git tag v0.1.0 && git push origin v0.1.0`。
-4. [`publish.yml`](.github/workflows/publish.yml) 会在 tag 匹配 `package.json` 版本时自动 `npm publish --provenance`。
-5. 需要在仓库 Settings → Secrets and variables → Actions 里配置 `NPM_TOKEN`。
+不发 npm。用户端拉取的就是仓库里的最新代码；如需固定版本给用户钉住，就打 git tag：
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+之后用户在 `tui.json` 里写 `"github:wh0isroot/opencode-session-tui#v0.1.0"` 即可锁到该 tag。
 
 ## 已知边界
 

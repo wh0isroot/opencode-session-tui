@@ -1,17 +1,13 @@
 {
   "name": "opencode-session-tui",
   "version": "0.1.0",
-  "description": "opencode TUI plugin: show top 10 sessions in the right sidebar with state highlighting (question/permission/busy/retry/unread) and click-to-switch",
+  "private": true,
+  "description": "opencode TUI plugin: show top 10 sessions in the right sidebar with state highlighting (question/permission/busy/retry/unread) and click-to-switch. Install directly from this git repo — no npm publish.",
   "type": "module",
   "main": "src/index.tsx",
   "exports": {
     ".": "./src/index.tsx"
   },
-  "files": [
-    "src",
-    "README.md",
-    "LICENSE"
-  ],
   "keywords": [
     "opencode",
     "opencode-plugin",
@@ -30,10 +26,6 @@
     "url": "https://github.com/wh0isroot/opencode-session-tui/issues"
   },
   "homepage": "https://github.com/wh0isroot/opencode-session-tui#readme",
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
-  },
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
