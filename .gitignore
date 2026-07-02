@@ -1,0 +1,18 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+.omo/
+.env
+.env.*
+!.env.example
+
+# Lockfiles from other package managers (we ship bun.lock only if committed)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Editor
+.vscode/
+.idea/
+*.swp

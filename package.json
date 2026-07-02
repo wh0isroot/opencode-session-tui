@@ -1,0 +1,53 @@
+{
+  "name": "opencode-session-tui",
+  "version": "0.1.0",
+  "description": "opencode TUI plugin: show top 10 sessions in the right sidebar with state highlighting (question/permission/busy/retry/unread) and click-to-switch",
+  "type": "module",
+  "main": "src/index.tsx",
+  "exports": {
+    ".": "./src/index.tsx"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "opencode",
+    "opencode-plugin",
+    "opencode-ai",
+    "tui",
+    "sidebar",
+    "session-switcher"
+  ],
+  "author": "wh0isroot",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wh0isroot/opencode-session-tui.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wh0isroot/opencode-session-tui/issues"
+  },
+  "homepage": "https://github.com/wh0isroot/opencode-session-tui#readme",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@opencode-ai/plugin": ">=1.17.0",
+    "@opencode-ai/sdk": ">=1.17.0",
+    "solid-js": ">=1.8.0"
+  },
+  "devDependencies": {
+    "@opencode-ai/plugin": "^1.17.13",
+    "@opencode-ai/sdk": "^1.17.13",
+    "@opentui/core": "^0.4.2",
+    "@opentui/solid": "^0.4.2",
+    "solid-js": "^1.9.14",
+    "typescript": "^6.0.3"
+  }
+}
