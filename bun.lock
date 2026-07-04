@@ -5,14 +5,17 @@
     "": {
       "name": "opencode-sidebar-sessions",
       "devDependencies": {
+        "@opencode-ai/plugin": "^1.17.13",
+        "@opencode-ai/sdk": "^1.17.13",
         "@opentui/core": "^0.4.2",
         "@opentui/solid": "^0.4.2",
+        "solid-js": "^1.9.14",
         "typescript": "^6.0.3",
       },
       "peerDependencies": {
-        "@opencode-ai/plugin": "^1.17.13",
-        "@opencode-ai/sdk": "^1.17.13",
-        "solid-js": "^1.9.14",
+        "@opencode-ai/plugin": ">=1.17.0",
+        "@opencode-ai/sdk": ">=1.17.0",
+        "solid-js": ">=1.8.0",
       },
     },
   },
