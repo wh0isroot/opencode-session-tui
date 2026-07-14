@@ -18,7 +18,7 @@ const UNREAD_KV_KEY = "sidebar-sessions.unread.v1"
 /** Sidebar slot order — smaller = higher up in the sidebar. */
 const SLOT_ORDER = 50
 
-/** Max characters shown for a session title before ellipsis. */
+/** Max display columns shown for a session title before ellipsis (wide/CJK chars count as 2). */
 const TITLE_MAX = 26
 
 // ---------------------------------------------------------------------------
@@ -83,10 +83,54 @@ function markerFor(kind: StateKind, theme: TuiPluginApi["theme"]["current"]): Ma
 // View
 // ---------------------------------------------------------------------------
 
-function truncate(raw: string, max: number): string {
+/** East Asian Wide / Fullwidth (and common emoji) code points render as 2 terminal columns. */
+function isWideCodePoint(cp: number): boolean {
+  return (
+    (cp >= 0x1100 && cp <= 0x115f) || // Hangul Jamo
+    (cp >= 0x2e80 && cp <= 0x303e) || // CJK Radicals … CJK Symbols & Punctuation
+    (cp >= 0x3041 && cp <= 0x33ff) || // Hiragana … CJK Compatibility
+    (cp >= 0x3400 && cp <= 0x4dbf) || // CJK Extension A
+    (cp >= 0x4e00 && cp <= 0x9fff) || // CJK Unified Ideographs
+    (cp >= 0xa000 && cp <= 0xa4cf) || // Yi
+    (cp >= 0xac00 && cp <= 0xd7a3) || // Hangul Syllables
+    (cp >= 0xf900 && cp <= 0xfaff) || // CJK Compatibility Ideographs
+    (cp >= 0xfe30 && cp <= 0xfe4f) || // CJK Compatibility Forms
+    (cp >= 0xff00 && cp <= 0xff60) || // Fullwidth Forms
+    (cp >= 0xffe0 && cp <= 0xffe6) || // Fullwidth signs
+    (cp >= 0x1f300 && cp <= 0x1f64f) || // emoji (Misc Symbols & Pictographs, Emoticons, Transport)
+    (cp >= 0x1f900 && cp <= 0x1f9ff) || // Supplemental Symbols & Pictographs
+    (cp >= 0x20000 && cp <= 0x3fffd) // CJK Extension B+
+  )
+}
+
+/** Display width of a string in terminal columns (iterates by code point so surrogate pairs count once). */
+function displayWidth(s: string): number {
+  let w = 0
+  for (const ch of s) w += isWideCodePoint(ch.codePointAt(0)!) ? 2 : 1
+  return w
+}
+
+/**
+ * Truncate to a display-column budget, appending "…" (1 column) when clipped.
+ *
+ * The terminal renders by columns, not UTF-16 code units: CJK / fullwidth chars
+ * occupy 2 columns each. Measuring with `.length` let wide-char titles pass a
+ * character-count check yet overflow the fixed-width sidebar, where the host
+ * hard-clips them at an inconsistent column (no ellipsis) — a ragged right edge.
+ * Counting columns keeps every row inside the budget.
+ */
+export function truncate(raw: string, maxCols: number): string {
   const s = raw || "(untitled)"
-  if (s.length <= max) return s
-  return s.slice(0, max - 1) + "…"
+  if (displayWidth(s) <= maxCols) return s
+  let out = ""
+  let w = 0
+  for (const ch of s) {
+    const cw = isWideCodePoint(ch.codePointAt(0)!) ? 2 : 1
+    if (w + cw > maxCols - 1) break // reserve 1 column for the ellipsis
+    out += ch
+    w += cw
+  }
+  return out + "…"
 }
 
 function SessionsView(props: { api: TuiPluginApi }) {
