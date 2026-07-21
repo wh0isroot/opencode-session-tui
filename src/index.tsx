@@ -213,6 +213,8 @@ function SessionsView(props: { api: TuiPluginApi }) {
       bump()
     }),
   )
+  onCleanup(api.event.on("session.updated", bump))
+  onCleanup(api.event.on("session.created", bump))
   onCleanup(api.event.on("question.asked", bump))
   onCleanup(api.event.on("question.replied", bump))
   onCleanup(api.event.on("question.rejected", bump))
